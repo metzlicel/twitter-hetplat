@@ -1,0 +1,58 @@
+@model IEnumerable<Twitter.Models.Post>
+@{
+    ViewData["Title"] = "Inicio";
+}
+
+<div class="container mt-4" style="max-width:600px;">
+    <h2 class="mb-4 text-center">Inicio</h2>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <form asp-action="Create" method="post" class="mb-4">
+            <div class="form-group mb-3">
+                <textarea id="content" name="content" class="form-control"
+                          maxlength="140" placeholder="¿Qué está pasando?" required></textarea>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">Publicar</button>
+            </div>
+        </form>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-warning">@TempData["Error"]</div>
+    }
+
+    @foreach (var post in Model)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex align-items-start">
+                    <img src="https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                         width="48" height="48" class="rounded-circle me-3" />
+                    <div class="flex-grow-1">
+                        <h6 class="text-muted mb-1">
+                            <strong>@(post.User?.UserName ?? "(usuario eliminado)")</strong>
+                            <span class="text-secondary">· @post.CreatedAt.ToLocalTime():g</span>
+                        </h6>
+                        <p class="mb-1">@post.Content</p>
+
+                        @if (post.EditedAt != null)
+                        {
+                            <small class="text-secondary">✏️ Editado</small>
+                        }
+
+                        @if (User.Identity.IsAuthenticated && post.User?.UserName == User.Identity.Name)
+                        {
+                            <div>
+                                <a asp-action="Edit" asp-route-id="@post.Id"
+                                   class="btn btn-sm btn-outline-secondary mt-2">Editar</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
