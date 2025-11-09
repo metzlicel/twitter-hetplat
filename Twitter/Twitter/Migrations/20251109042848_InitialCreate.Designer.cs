@@ -8,10 +8,10 @@ using Twitter.Data;
 
 #nullable disable
 
-namespace Twitter.Data.Migrations
+namespace Twitter.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251108215520_InitialCreate")]
+    [Migration("20251109042848_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -81,11 +81,6 @@ namespace Twitter.Data.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
@@ -136,10 +131,6 @@ namespace Twitter.Data.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -253,19 +244,6 @@ namespace Twitter.Data.Migrations
                     b.ToTable("Posts");
                 });
 
-            modelBuilder.Entity("Twitter.Models.AppUser", b =>
-                {
-                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
-
-                    b.Property<string>("DisplayName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ProfileImageUrl")
-                        .HasColumnType("TEXT");
-
-                    b.HasDiscriminator().HasValue("AppUser");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -319,7 +297,7 @@ namespace Twitter.Data.Migrations
 
             modelBuilder.Entity("Twitter.Models.Post", b =>
                 {
-                    b.HasOne("Twitter.Models.AppUser", "User")
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

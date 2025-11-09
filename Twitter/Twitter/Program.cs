@@ -11,6 +11,14 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
         options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+builder.Services.AddAuthentication()
+    .AddGitHub(options =>
+    {
+        options.ClientId = builder.Configuration["Authentication:GitHub:ClientId"];
+        options.ClientSecret = builder.Configuration["Authentication:GitHub:ClientSecret"];
+        options.Scope.Add("user:email");
+    });
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
